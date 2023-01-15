@@ -1,16 +1,10 @@
-from typing import Union
 from fastapi import FastAPI
-from .routers import contracts
+from fastapi.security import OAuth2PasswordBearer
+from .routers import home, contracts, items
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app = FastAPI()
 app.include_router(contracts.router)
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+app.include_router(items.router)
+app.include_router(home.router)
