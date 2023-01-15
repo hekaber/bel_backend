@@ -16,8 +16,8 @@ async def read_root(token: str = Depends(oauth2.oauth2_scheme)):
     return {"token": token }
 
 @router.get("/testing")
-async def read_testing(token: str = Depends(oauth2.oauth2_scheme)):
-    return {"token": token, "status": "test" }
+async def read_testing():
+    return { "status": "test" }
 
 @router.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from ..dependencies.user import get_current_user
+from ..dependencies.user import get_current_active_user
 from ..models import User
 
 
@@ -11,6 +11,6 @@ router = APIRouter(
 )
 
 @router.get("/me")
-async def read_users_me(current_user: User = Depends(get_current_user)):
+async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
 
