@@ -12,9 +12,11 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
+COPY ./alembic.ini /code/alembic.ini
 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+COPY ./alembic /code/alembic
 COPY ./app /code/app
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder

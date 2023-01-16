@@ -4,3 +4,5 @@ __pycache__/
 *.old
 venv/
 data/
+config/.env
+alembic/versions/

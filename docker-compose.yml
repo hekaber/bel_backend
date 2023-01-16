@@ -3,13 +3,18 @@ version: '3.4'
 services:
   belbackend:
     container_name: belbe
+    environment:
+      - DATABASE_URL=mysql+pymysql://bel:1234@beldb/local
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
       - 8000:8000
+    depends_on:
+      - db
     volumes:
       - ./app/:/code/app/
+      - ./alembic/:/code/alembic
     networks:
       - belnet
 
@@ -30,15 +35,6 @@ services:
       - ./data/db:/var/lib/mysql:delegated
     networks:
       - belnet
-    # command:
-    #   [
-    #     'mysqld',
-    #     '--tmp-table-size=3221225472',
-    #     '--max-heap-table-size=3221225472',
-    #     '--character-set-server=utf8mb4',
-    #     '--collation-server=utf8mb4_unicode_ci',
-    #     '--sql-mode='
-    #   ]
 networks:
   belnet:
     driver: bridge
