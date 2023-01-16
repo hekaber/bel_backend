@@ -1,5 +1,10 @@
 from fastapi import FastAPI
 from .routers import home, contracts, items, users
+from .models import orm
+from .dependencies.database.db import engine
+from dotenv import load_dotenv
+
+orm.user.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
