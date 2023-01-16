@@ -2,7 +2,7 @@ from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from ..dependencies import oauth2
 from ..dependencies.utils.token import fake_users_db, fake_hash_password
-from ..models import User
+from ..models.schema.user import User
 
 
 router = APIRouter(

@@ -1,4 +1,4 @@
-from ...models import User
+from ...models.schema.user import User
 
 fake_users_db = {
     "johndoe": {

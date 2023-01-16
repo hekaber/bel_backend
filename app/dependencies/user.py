@@ -1,7 +1,7 @@
 from .oauth2 import oauth2_scheme
 from fastapi import Depends, HTTPException, status
 from .utils.token import fake_decode_token
-from ..models import User
+from ..models.schema.user import User
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
