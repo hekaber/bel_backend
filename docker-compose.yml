@@ -8,6 +8,37 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - 8000:8000
-
     volumes:
       - ./app/:/code/app/
+    networks:
+      - belnet
+
+  db:
+    image: mariadb:10.10.2-jammy
+    restart: always
+    container_name: beldb
+    environment:
+      MYSQL_DATABASE: 'local'
+      MYSQL_USER: 'bel'
+      MYSQL_PASSWORD: '1234'
+      MYSQL_ROOT_PASSWORD: '1234'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - ./data/db:/var/lib/mysql:delegated
+    networks:
+      - belnet
+    # command:
+    #   [
+    #     'mysqld',
+    #     '--tmp-table-size=3221225472',
+    #     '--max-heap-table-size=3221225472',
+    #     '--character-set-server=utf8mb4',
+    #     '--collation-server=utf8mb4_unicode_ci',
+    #     '--sql-mode='
+    #   ]
+networks:
+  belnet:
+    driver: bridge
