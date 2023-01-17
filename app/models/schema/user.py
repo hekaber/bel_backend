@@ -4,9 +4,12 @@ from pydantic import BaseModel, constr
 
 
 class User(BaseModel):
+
     username: str
+    firstname: Union[str, None] = None
+    lastname: Union[str, None] = None
     email: Union[str, None] = None
-    full_name: Union[str, None] = None
+    phone: Union[str, None] = None
     disabled: Union[bool, None] = None
     hashed_password: Union[str, None] = None
 

@@ -13,10 +13,15 @@ class UserService():
         self.user_repository = user_repository
 
     def register_user(self, user: UserCreate):
-        user = self.user_repository.get_user_by_email(user)
-        if user:
+        existing_user = self.user_repository.get_user_by_email(user)
+        if existing_user:
             return {
-                "message": "User %s already exists".__format__(user.email),
+                "message": "User %s already exists".format(user.email),
                 "content": user
             }
 
+        result = self.user_repository.create_user(user)
+        return {
+            "message": "User %s created successfully".format(result.email),
+            "content": UserCreate(**result.__dict__)
+        }

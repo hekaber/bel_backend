@@ -11,7 +11,11 @@ class UserRepository(BaseRepository):
 
     def create_user(self, user: UserCreate):
         fake_hashed_password = user.password + "notreallyhashed"
-        db_user = User(email=user.email, hashed_password=fake_hashed_password)
+        print(user)
+        hashed_password = user.password
+        user_dict = user.__dict__
+        del user_dict['password']
+        db_user = User(**user_dict)
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)

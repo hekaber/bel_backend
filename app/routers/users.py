@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from ..dependencies.user import get_current_active_user
 from ..services import UserService
-from ..models.schema.user import User
+from ..models.schema.user import User, UserCreate
 
 router = APIRouter(
     prefix="/users",
@@ -16,7 +16,9 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 
 @router.post("/register")
 def register_user(
-    user: User,
+    user: UserCreate,
     service: UserService = Depends()
     ):
-    registered = service.register_user(user)
+
+    message = service.register_user(user)
+    return message;
