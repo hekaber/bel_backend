@@ -7,11 +7,10 @@ from ..orm import User
 class UserRepository(BaseRepository):
 
     def get_user_by_email(self, email: Union[str, None]):
-        self.db.query(User).filter(User.email == email).first()
+        return self.db.query(User).filter(User.email == email).first()
 
     def create_user(self, user: UserCreate):
         fake_hashed_password = user.password + "notreallyhashed"
-        print(user)
         hashed_password = user.password
         user_dict = user.__dict__
         del user_dict['password']

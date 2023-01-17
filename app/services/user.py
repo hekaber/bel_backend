@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.models.repository.user import UserRepository
 from ..models.schema.user import UserCreate
 from fastapi import Depends
@@ -13,15 +13,23 @@ class UserService():
         self.user_repository = user_repository
 
     def register_user(self, user: UserCreate):
-        existing_user = self.user_repository.get_user_by_email(user)
+        existing_user = self.user_repository.get_user_by_email(user.email)
         if existing_user:
             return {
-                "message": "User %s already exists".format(user.email),
-                "content": user
+                "message": f"User {user.email} already exists",
+                "content": user,
+                "success": False
             }
-
-        result = self.user_repository.create_user(user)
+        try:
+            result = self.user_repository.create_user(user)
+        except IntegrityError as ie:
+            return {
+                "message": f"Something failed in the database: {ie}",
+                "content": {},
+                "success": False
+            }
         return {
-            "message": "User %s created successfully".format(result.email),
-            "content": UserCreate(**result.__dict__)
+            "message": f"User {result.email} created successfully",
+            "content": UserCreate(**result.__dict__),
+            "success": True
         }
