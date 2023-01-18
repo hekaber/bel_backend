@@ -7,7 +7,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-
 @router.get("/", tags=["contracts"])
 async def read_contracts():
     return [{"username": "Rick"}, {"username": "Morty"}]

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, LargeBinary
 from ...models.schema.user import UserCreate
 from ...dependencies.database.base_class import Base
 

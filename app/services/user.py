@@ -1,5 +1,9 @@
+import binascii
 from sqlalchemy.exc import IntegrityError
-from app.models.repository.user import UserRepository
+from ..dependencies.exceptions.common import AuthenticationException
+from ..dependencies.utils.token import generate_access_token, hash_password
+from ..dependencies.exceptions.user import UserNotFoundException
+from ..models.repository.user import UserRepository
 from ..models.schema.user import User, UserCreate
 from fastapi import Depends
 
@@ -12,8 +16,27 @@ class UserService():
             ) -> None:
         self.user_repository = user_repository
 
+    def user_login(self, username: str, password: str) -> dict:
+        user = self.user_repository.get_user_by_email_or_username(username=username)
+        if user is None:
+            raise UserNotFoundException()
+
+        check_hash, salt = hash_password(password, user.salt)
+
+        if check_hash != binascii.unhexlify(user.hash)[:32]:
+            raise AuthenticationException()
+
+        access_token = generate_access_token()
+        return {
+            "message": "authentified",
+            "content": {
+                "token": access_token
+            },
+            "success": True
+        }
+
     def register_user(self, user: UserCreate):
-        existing_user = self.user_repository.get_user_by_email(user.email)
+        existing_user = self.user_repository.get_user_by_email_or_username(email=user.email, username=user.username)
         if existing_user:
             return {
                 "message": f"User {user.email} already exists",
