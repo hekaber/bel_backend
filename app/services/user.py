@@ -30,7 +30,8 @@ class UserService():
         return {
             "message": "authentified",
             "content": {
-                "token": access_token
+                "token": access_token,
+                "token_type": "Bearer"
             },
             "success": True
         }
