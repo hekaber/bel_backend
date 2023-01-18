@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, LargeBinary
-from ...models.schema.user import UserCreate
+from sqlalchemy import Column, Integer, String, Boolean
 from ...dependencies.database.base_class import Base
 
 
@@ -17,3 +16,4 @@ class User(Base):
             )
     salt = Column(String(255), unique=True)
     disabled = Column(Boolean)
+    access_token= Column(String(255))

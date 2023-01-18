@@ -26,7 +26,19 @@ class UserService():
         if check_hash != binascii.unhexlify(user.hash)[:32]:
             raise AuthenticationException()
 
+        if user.access_token:
+            return {
+            "message": "authentified",
+                "content": {
+                    "token": user.access_token,
+                    "token_type": "Bearer"
+                },
+                "success": True
+            }
+
         access_token = generate_access_token()
+        user.access_token = access_token
+        user = self.user_repository.update_token(user, access_token)
         return {
             "message": "authentified",
             "content": {

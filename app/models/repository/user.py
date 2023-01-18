@@ -2,14 +2,18 @@ from base64 import b64encode
 import binascii
 from typing import Union
 from .base import BaseRepository
-from sqlalchemy import or_
+from sqlalchemy import or_, text, insert
 from ..schema.user import UserCreate
 from ..orm import User
 from ...dependencies.utils.token import hash_password
 
 class UserRepository(BaseRepository):
 
-    def get_user_by_email_or_username(self, email: Union[str, None]=None, username: Union[str, None]=None):
+    def get_user_by_email_or_username(
+            self,
+            email: Union[str, None]=None,
+            username: Union[str, None]=None
+            ) -> Union[User, None]:
         """ Get user by email or username criteria"""
         return self.db.query(User).filter(
             or_(
@@ -18,7 +22,7 @@ class UserRepository(BaseRepository):
             )
         ).first()
 
-    def create_user(self, user: UserCreate):
+    def create_user(self, user: UserCreate) -> User:
         hashed_password, salt = hash_password(user.password)
         hash_to_store = hashed_password + salt
         user_dict = user.__dict__
@@ -30,3 +34,10 @@ class UserRepository(BaseRepository):
         self.db.commit()
         self.db.refresh(db_user)
         return db_user
+
+    def update_token(self, user: User, access_token: str) -> None:
+        self.db.query(User).filter(User.id == user.id).update({
+                'access_token': access_token, 
+                'expires':text("NOW() + INTERVAL 5 MINUTES")
+                })
+        self.db.commit()
