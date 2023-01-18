@@ -29,7 +29,7 @@ class UserService():
                 "success": False
             }
         return {
-            "message": f"User {result.email} created successfully",
-            "content": UserCreate(**result.__dict__),
+            "message": f"User {result.username} created successfully",
+            "content": result,
             "success": True
         }

@@ -9,9 +9,11 @@ class User(Base):
     username = Column(String(63), unique=True)
     email = Column(String(63), unique=True)
     phone = Column(String(63))
-    firstname = Column(String(63), unique=True)
-    lastname = Column(String(63), unique=True)
-    hashed_password = Column(
-            String(63), unique=True
+    mobile = Column(String(63))
+    firstname = Column(String(63))
+    lastname = Column(String(63))
+    hash = Column(
+            String(255), unique=True
             )
+    salt = Column(String(255), unique=True)
     disabled = Column(Boolean)
