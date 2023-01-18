@@ -1,6 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 from app.models.repository.user import UserRepository
-from ..models.schema.user import UserCreate
+from ..models.schema.user import User, UserCreate
 from fastapi import Depends
 
 
@@ -30,6 +30,6 @@ class UserService():
             }
         return {
             "message": f"User {result.username} created successfully",
-            "content": result,
+            "content": User(**result.__dict__),
             "success": True
         }

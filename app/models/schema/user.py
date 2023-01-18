@@ -9,6 +9,7 @@ class User(BaseModel):
     lastname: Union[str, None] = None
     email: Union[str, None] = None
     phone: Union[str, None] = None
+    mobile: Union[str, None] = None
 
     class Config:
         orm_mode = True
