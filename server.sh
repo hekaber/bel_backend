@@ -11,6 +11,7 @@ usage() {
 Usage: server [params]
 Params:
 -s     | --start: start docker-compose
+-d     | --debug: start container in debug mode
 -n     | --stop: stop docker
 -k     | --kill: reset image with image name param
 EOF
@@ -28,6 +29,9 @@ while [ "$1" != "" ]; do
   -s | --start)
     # sync the solidity contract abi into the webapp
     docker-compose up --remove-orphans -d
+    ;;
+  -d | --debug)
+    docker-compose -f $(pwd)/docker-compose.yml -f $(pwd)/docker-compose.debug.yml up -d
     ;;
   -n | --stop)
     docker-compose down
