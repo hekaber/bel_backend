@@ -26,6 +26,7 @@ class UserRepository(BaseRepository):
         ).first()
 
     def create_user(self, user: UserCreate) -> User:
+        """Create new user in system"""
         hashed_password, salt = hash_password(user.password)
         hash_to_store = hashed_password + salt
         user_dict = user.__dict__
@@ -39,6 +40,7 @@ class UserRepository(BaseRepository):
         return db_user
 
     def upsert_token(self, user: User, access_token: str) -> None:
+        """Update/Insert any kind of token"""
         existing_key = self.db.query(AccessKey).filter(
                 AccessKey.user_id == user.id,
                 AccessKey.auth_type == AuthType.BEARER.value
@@ -60,6 +62,7 @@ class UserRepository(BaseRepository):
         self.db.commit()
 
     def get_access_key(self, user: User, auth_type: str) -> AccessKey:
+        """Access authentication"""
         return self.db.query(AccessKey).filter(
             AccessKey.user_id == user.id,
             AccessKey.auth_type == auth_type
