@@ -1,6 +1,7 @@
 import binascii
 from sqlalchemy.exc import IntegrityError
 from ..dependencies.exceptions.common import AuthenticationException
+from ..dependencies.utils.enums import AuthType
 from ..dependencies.utils.token import generate_access_token, hash_password
 from ..dependencies.exceptions.user import UserNotFoundException
 from ..models.repository.user import UserRepository
@@ -26,24 +27,25 @@ class UserService():
         if check_hash != binascii.unhexlify(user.hash)[:32]:
             raise AuthenticationException()
 
-        if user.access_token:
+        access_key = self.user_repository.get_access_key(user, AuthType.BEARER.value)
+        # TODO: check if access_key has not expired
+        if access_key:
             return {
             "message": "authentified",
                 "content": {
-                    "token": user.access_token,
-                    "token_type": "Bearer"
+                    "token": access_key.access_token,
+                    "token_type": AuthType.BEARER.value
                 },
                 "success": True
             }
 
         access_token = generate_access_token()
-        user.access_token = access_token
-        user = self.user_repository.update_token(user, access_token)
+        user = self.user_repository.upsert_token(user, access_token)
         return {
             "message": "authentified",
             "content": {
                 "token": access_token,
-                "token_type": "Bearer"
+                "token_type": AuthType.BEARER.value
             },
             "success": True
         }

@@ -16,4 +16,3 @@ class User(Base):
             )
     salt = Column(String(255), unique=True)
     disabled = Column(Boolean)
-    access_token= Column(String(255))

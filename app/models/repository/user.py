@@ -6,6 +6,9 @@ from sqlalchemy import or_, text, insert
 from ..schema.user import UserCreate
 from ..orm import User
 from ...dependencies.utils.token import hash_password
+from ...dependencies.utils.enums import AuthType
+from ...models.orm.auth import AccessKey
+
 
 class UserRepository(BaseRepository):
 
@@ -35,9 +38,29 @@ class UserRepository(BaseRepository):
         self.db.refresh(db_user)
         return db_user
 
-    def update_token(self, user: User, access_token: str) -> None:
-        self.db.query(User).filter(User.id == user.id).update({
-                'access_token': access_token, 
-                'expires':text("NOW() + INTERVAL 5 MINUTES")
-                })
+    def upsert_token(self, user: User, access_token: str) -> None:
+        existing_key = self.db.query(AccessKey).filter(
+                AccessKey.user_id == user.id,
+                AccessKey.auth_type == AuthType.BEARER.value
+                ).first()
+
+        if existing_key:
+            self.db.query(
+                    AccessKey
+                    ).filter(
+                    AccessKey.id == existing_key.id
+                    ).update({'access_token': access_token})
+        else:
+            db_access_key = AccessKey(
+                user=user,
+                access_token=access_token,
+                auth_type=AuthType.BEARER.value
+                )
+            self.db.add(db_access_key)
         self.db.commit()
+
+    def get_access_key(self, user: User, auth_type: str) -> AccessKey:
+        return self.db.query(AccessKey).filter(
+            AccessKey.user_id == user.id,
+            AccessKey.auth_type == auth_type
+        ).first()
