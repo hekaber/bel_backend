@@ -5,7 +5,7 @@ from ..services.user import UserService
 from ..dependencies import oauth2
 from ..dependencies.exceptions.common import AuthenticationException
 from ..dependencies.exceptions.user import UserNotFoundException
-from ..models.schema.user import User, UserCreate
+from ..models.schema.user import UserCreate
 
 
 router = APIRouter(
