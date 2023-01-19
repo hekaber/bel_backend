@@ -11,5 +11,5 @@ class AccessKey(Base):
     access_token = Column(String(255))
     auth_type = Column(String(255))
     time_created = Column(DateTime(timezone=True), server_default=func.now())
-time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 

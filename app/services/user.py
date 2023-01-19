@@ -1,4 +1,5 @@
 import binascii
+from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 from ..dependencies.exceptions.common import AuthenticationException
 from ..dependencies.utils.enums import AuthType
@@ -29,15 +30,21 @@ class UserService():
 
         access_key = self.user_repository.get_access_key(user, AuthType.BEARER.value)
         # TODO: check if access_key has not expired
+        current_date = datetime.now()
+
         if access_key:
-            return {
-            "message": "authentified",
-                "content": {
-                    "token": access_key.access_token,
-                    "token_type": AuthType.BEARER.value
-                },
-                "success": True
-            }
+            last_update_time = access_key.time_updated if access_key.time_updated else access_key.time_created
+            time_difference = (current_date - last_update_time).seconds + (current_date - last_update_time).days * 86400
+
+            if time_difference <= 3600:
+                return {
+                "message": "authentified",
+                    "content": {
+                        "token": access_key.access_token,
+                        "token_type": AuthType.BEARER.value
+                    },
+                    "success": True
+                }
 
         access_token = generate_access_token()
         user = self.user_repository.upsert_token(user, access_token)
