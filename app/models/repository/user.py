@@ -39,10 +39,10 @@ class UserRepository(BaseRepository):
         self.db.refresh(db_user)
         return db_user
 
-    def upsert_token(self, user: User, access_token: str) -> None:
+    def upsert_token(self, access_token: str, user: User, secret: str) -> None:
         """Update/Insert any kind of token"""
         existing_key = self.db.query(AccessKey).filter(
-                AccessKey.user_id == user.id,
+                AccessKey.secret == secret,
                 AccessKey.auth_type == AuthType.BEARER.value
                 ).first()
 
@@ -56,6 +56,7 @@ class UserRepository(BaseRepository):
             db_access_key = AccessKey(
                 user=user,
                 access_token=access_token,
+                secret=secret,
                 auth_type=AuthType.BEARER.value
                 )
             self.db.add(db_access_key)
