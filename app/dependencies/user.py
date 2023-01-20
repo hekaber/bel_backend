@@ -1,11 +1,12 @@
-from .oauth2 import oauth2_scheme
 from fastapi import Depends, HTTPException, status
-from .utils.token import fake_decode_token
+from .oauth2 import oauth2_scheme
+from .utils.token import decode_token
 from ..models.schema.user import User
+from ..dependencies.database.db import get_db
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    user = fake_decode_token(token)
+async def get_current_user(token: str = Depends(oauth2_scheme), db = Depends(get_db)):
+    user = decode_token(token, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

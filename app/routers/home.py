@@ -1,10 +1,10 @@
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ..services.user import UserService
+from ..dependencies.user import get_current_user
+from ..services import AuthenticationService, UserService
 from ..dependencies import oauth2
-from ..dependencies.exceptions.common import AuthenticationException
-from ..dependencies.exceptions.user import UserNotFoundException
+from ..exceptions import UserNotFoundException, AuthenticationException
 from ..models.schema.user import UserCreate
 
 
@@ -39,11 +39,11 @@ def register_user(
                 )
     return result
 
-@router.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), user_service: UserService = Depends()):
+@router.post("/login")
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), service: AuthenticationService = Depends()):
 
     try:
-        result = user_service.user_login(form_data.username, form_data.password)
+        result = service.user_login(form_data.username, form_data.password)
     except UserNotFoundException as unfe:
         raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -56,3 +56,12 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), user_service: 
         )
 
     return result
+
+@router.get("/logout")
+async def logout(token: str = Depends(oauth2.oauth2_scheme)):
+     print(token)
+     return {}
+
+@router.get("/token")
+async def get_token():
+     pass

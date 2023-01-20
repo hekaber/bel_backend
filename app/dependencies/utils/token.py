@@ -1,10 +1,15 @@
-from base64 import b64decode
 import binascii
 import hashlib
 import os
+import jwt
+
 from uuid import uuid4
-from ...models.schema.user import User
+from fastapi import Depends
 from typing import List, Union
+
+from ...models.orm.auth import AccessKey
+from ...models.schema.user import User
+from ..database.db import get_db
 
 fake_users_db = {
     "johndoe": {
@@ -23,11 +28,18 @@ fake_users_db = {
     },
 }
 
-def fake_hash_password(password: str):
-    return "fakehashed" + password
+def generate_secret(user: User) -> str:
+    return f"{user.email}:{uuid4()}"
 
-def generate_access_token() -> str:
-    return uuid4()
+def generate_bearer_token(user: User, secret: str) -> str:
+    return jwt.encode(
+        {
+            "username": user.username,
+            "email": user.email,
+        },
+        secret,
+        algorithm="HS256"
+    )
 
 def hash_password(password: str, salt: Union[bytes, None]=None) -> List[bytes]:
 
@@ -48,3 +60,7 @@ def get_user(db, username: str):
 def fake_decode_token(token):
     user = get_user(fake_users_db, token)
     return user
+
+def decode_token(token: str, db = Depends(get_db)):
+    access_key = db.query(AccessKey).filter(AccessKey.access_token == token).first()
+    return access_key.user if access_key else None

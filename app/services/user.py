@@ -1,10 +1,7 @@
-import binascii
-from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
-from ..dependencies.exceptions.common import AuthenticationException
-from ..dependencies.utils.enums import AuthType
-from ..dependencies.utils.token import generate_access_token, hash_password
-from ..dependencies.exceptions.user import UserNotFoundException
+from ..classes.enums import AuthType
+from ..dependencies.utils.token import generate_bearer_token, generate_secret, hash_password
+from ..exceptions import UserNotFoundException
 from ..models.repository.user import UserRepository
 from ..models.schema.user import User, UserCreate
 from fastapi import Depends
@@ -16,49 +13,10 @@ class UserService():
             self,
             user_repository: UserRepository = Depends()
             ) -> None:
-        self.user_repository = user_repository
+        self.__user_repository = user_repository
 
-    def user_login(self, username: str, password: str) -> dict:
-        user = self.user_repository.get_user_by_email_or_username(username=username)
-        if user is None:
-            raise UserNotFoundException()
-
-        check_hash, salt = hash_password(password, user.salt)
-
-        if check_hash != binascii.unhexlify(user.hash)[:32]:
-            raise AuthenticationException()
-
-        access_key = self.user_repository.get_access_key(user, AuthType.BEARER.value)
-        # TODO: check if access_key has not expired
-        current_date = datetime.now()
-
-        if access_key:
-            last_update_time = access_key.time_updated if access_key.time_updated else access_key.time_created
-            time_difference = (current_date - last_update_time).seconds + (current_date - last_update_time).days * 86400
-
-            if time_difference <= 3600:
-                return {
-                "message": "authentified",
-                    "content": {
-                        "token": access_key.access_token,
-                        "token_type": AuthType.BEARER.value
-                    },
-                    "success": True
-                }
-
-        access_token = generate_access_token()
-        user = self.user_repository.upsert_token(user, access_token)
-        return {
-            "message": "authentified",
-            "content": {
-                "token": access_token,
-                "token_type": AuthType.BEARER.value
-            },
-            "success": True
-        }
-
-    def register_user(self, user: UserCreate):
-        existing_user = self.user_repository.get_user_by_email_or_username(email=user.email, username=user.username)
+    def create_user(self, user: UserCreate):
+        existing_user = self.__user_repository.get_user_by_email_or_username(email=user.email, username=user.username)
         if existing_user:
             return {
                 "message": f"User {user.email} already exists",
@@ -66,7 +24,7 @@ class UserService():
                 "success": False
             }
         try:
-            result = self.user_repository.create_user(user)
+            result = self.__user_repository.create_user(user)
         except IntegrityError as ie:
             return {
                 "message": f"Something failed in the database: {ie}",

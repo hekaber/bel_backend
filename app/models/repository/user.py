@@ -6,7 +6,7 @@ from sqlalchemy import or_, text, insert
 from ..schema.user import UserCreate
 from ..orm import User
 from ...dependencies.utils.token import hash_password
-from ...dependencies.utils.enums import AuthType
+from ...classes.enums import AuthType
 from ...models.orm.auth import AccessKey
 
 
