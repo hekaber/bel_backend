@@ -3,6 +3,7 @@ import hashlib
 import os
 import jwt
 
+from base64 import b64decode
 from uuid import uuid4
 from fastapi import Depends
 from typing import List, Union
@@ -10,34 +11,18 @@ from typing import List, Union
 from ...models.orm.auth import AccessKey
 from ...models.schema.user import User
 from ..database.db import get_db
+from ...classes.config import config
 
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "fakehashedsecret",
-        "disabled": False,
-    },
-    "alice": {
-        "username": "alice",
-        "full_name": "Alice Wonderson",
-        "email": "alice@example.com",
-        "hashed_password": "fakehashedsecret2",
-        "disabled": True,
-    },
-}
 
-def generate_secret(user: User) -> str:
-    return f"{user.email}:{uuid4()}"
+def generate_token() -> str:
+    return str(uuid4())
 
-def generate_bearer_token(user: User, secret: str) -> str:
+def generate_bearer_token(access_token: str) -> str:
     return jwt.encode(
         {
-            "username": user.username,
-            "email": user.email,
+            "access_token":  access_token
         },
-        secret,
+        b64decode(config("SECRET_KEY")),
         algorithm="HS256"
     )
 
@@ -57,10 +42,5 @@ def get_user(db, username: str):
         user_dict = db[username]
         return User(**user_dict)
 
-def fake_decode_token(token):
-    user = get_user(fake_users_db, token)
-    return user
-
-def decode_token(token: str, db = Depends(get_db)):
-    access_key = db.query(AccessKey).filter(AccessKey.access_token == token).first()
-    return access_key.user if access_key else None
+def decode_token(token: str, db = Depends(get_db)) -> dict:
+    return jwt.decode(token, b64decode(config("SECRET_KEY")),"HS256")
