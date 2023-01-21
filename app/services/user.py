@@ -1,10 +1,8 @@
+from fastapi import Depends
 from sqlalchemy.exc import IntegrityError
-from ..classes.enums import AuthType
-from ..dependencies.utils.token import generate_bearer_token, generate_secret, hash_password
-from ..exceptions import UserNotFoundException
+
 from ..models.repository.user import UserRepository
 from ..models.schema.user import User, UserCreate
-from fastapi import Depends
 
 
 class UserService():

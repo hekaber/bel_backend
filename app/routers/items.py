@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import Union
 
-from ..dependencies.user import get_current_user
+from ..dependencies.user import get_current_access
 from ..dependencies.oauth2 import get_token_header
 
 
@@ -10,7 +10,7 @@ router = APIRouter(
     tags=["items"],
     dependencies=[
         Depends(get_token_header),
-        Depends(get_current_user)
+        Depends(get_current_access)
     ],
     responses={404: {"description": "Not found"}},
 )
