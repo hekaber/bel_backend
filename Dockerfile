@@ -18,6 +18,7 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY ./alembic /code/alembic
 COPY ./app /code/app
+COPY ./config/.env.docker /code/config/.env
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 RUN pip install debugpy -t /tmp \
