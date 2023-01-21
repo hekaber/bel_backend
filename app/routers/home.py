@@ -3,7 +3,7 @@ import os
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ..dependencies.user import get_current_access
+from ..dependencies.oauth2 import get_current_access
 from ..exceptions.user import UserException
 from ..exceptions.auth import AuthenticationException
 from ..services import AuthenticationService, UserService
