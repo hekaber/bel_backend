@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from ...classes.config import config
 
-#SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
-# TODO: set it with env variables
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://bel:1234@beldb/local"
+SQLALCHEMY_DATABASE_URL = config("DATABASE_URL")
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={}
