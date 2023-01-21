@@ -52,6 +52,7 @@ class UserRepository(BaseRepository):
                     ).filter(
                     AccessKey.id == existing_key.id
                     ).update({'access_token': access_token})
+            self.db.commit()
         else:
             db_access_key = AccessKey(
                 user=user,
@@ -59,8 +60,8 @@ class UserRepository(BaseRepository):
                 auth_type=AuthType.BEARER.value
                 )
             self.db.add(db_access_key)
+            self.db.commit()
             self.db.refresh(db_access_key)
-        self.db.commit()
 
     def get_access_key(self, user: User, auth_type: str) -> AccessKey:
         """Access authentication"""
