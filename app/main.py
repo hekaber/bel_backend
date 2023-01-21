@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import home, contracts, items, users, certifications
+from .routers import home, contracts, users, certifications
 from .dependencies.database.db import engine
 from .dependencies.database.base import Base
 from .classes.config import load_env
