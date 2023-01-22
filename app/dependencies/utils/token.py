@@ -8,7 +8,7 @@ from uuid import uuid4
 from fastapi import Depends
 from typing import List, Union
 
-from ...models.orm.auth import AccessKey
+from ...models.orm import AccessKey
 from ...models.schema.user import User
 from ..database.db import get_db
 from ...classes.config import config

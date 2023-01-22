@@ -1,5 +1,5 @@
 from .base import BaseRepository
-from ...models.orm.auth import AccessKey
+from ...models.orm import AccessKey
 
 class AuthRepository(BaseRepository):
 

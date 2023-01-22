@@ -3,7 +3,7 @@ from fastapi import Header, HTTPException, Depends, status
 
 from .utils.token import decode_token
 from ..dependencies.database.db import get_db
-from ..models.orm.auth import AccessKey
+from ..models.orm import AccessKey
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

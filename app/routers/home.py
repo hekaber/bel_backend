@@ -9,7 +9,7 @@ from ..exceptions.auth import AuthenticationException
 from ..services import AuthenticationService, UserService
 from ..dependencies import oauth2
 from ..models.schema.user import UserCreate
-from ..models.orm.auth import AccessKey
+from ..models.orm import AccessKey
 
 
 router = APIRouter(

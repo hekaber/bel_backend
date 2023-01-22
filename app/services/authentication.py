@@ -9,7 +9,7 @@ from ..dependencies.utils.token import generate_bearer_token, generate_token, ha
 from ..exceptions.auth import AuthenticationException, AuthenticationErrorException
 from ..exceptions.user import UserNotFoundException
 from ..models.repository import UserRepository, AuthRepository
-from ..models.orm.auth import AccessKey
+from ..models.orm import AccessKey
 
 
 class AuthenticationService():

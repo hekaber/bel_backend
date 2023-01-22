@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from ..dependencies.user import get_current_active_user
-from ..services import UserService
-from ..models.schema.user import User, UserCreate
+from ..models.schema.user import User
 
 router = APIRouter(
     prefix="/users",
