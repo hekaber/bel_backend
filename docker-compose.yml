@@ -18,6 +18,19 @@ services:
     networks:
       - belnet
 
+  nginx:
+    container_name: proxy
+    image: nginx:1.23.3-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/ssl:/etc/nginx/ssl
+    command: [ nginx-debug, '-g', 'daemon off;' ]
+    networks:
+      - belnet
+
   db:
     image: mariadb:10.10.2-jammy
     restart: always
@@ -35,6 +48,7 @@ services:
       - ./data/db:/var/lib/mysql:delegated
     networks:
       - belnet
+
 networks:
   belnet:
     driver: bridge

@@ -7,3 +7,4 @@ data/
 config/.env
 config/.env.docker
 alembic/versions/
+config/ssl/*.pem
